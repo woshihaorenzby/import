@@ -237,9 +237,16 @@ export const asyncRouterMap = [
         hidden: true
       },
       {
+        path: 'tabs',
+        name: 'tabs',
+        component: () => import('@/views/ums/role/tabs'),
+        meta: {title: '分配资源'},
+        hidden: true
+      },
+      {
         path: 'allocResource',
         name: 'allocResource',
-        component: () => import('@/views/ums/role/allocResource'),
+        component: () => import('@/views/ums/role/tabChildren/allocResource'),
         meta: {title: '分配资源'},
         hidden: true
       },
