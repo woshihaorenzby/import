@@ -1,25 +1,26 @@
 <template>
-    <div>
-      <div v-if="fields!=null"  :key="'field'+fields.id">
-        <el-row class="table-layout">
-          <el-col :span="8"  :key="fields.id" style="padding: 4px 0">
-            <el-checkbox v-model="resource.checked" @change="handleCheckChange(resource)">
-              {{resource.name}}
-            </el-checkbox>
-          </el-col>
-        </el-row>
-      </div>
-    </div>
+  <div>
+    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+    <div style="margin: 15px 0;"></div>
+    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+      <el-checkbox v-for="city in cities" :label="city.name" :key="city.title" :checked="city.check===1?true:false">{{city.title}}</el-checkbox>
+    </el-checkbox-group>
+  </div>
 </template>
 <script>
   import {fetchAllResourceList} from '@/api/importField';
+  const cityOptions = [];
   export default {
     name: 'child2',
     data() {
       return {
         //资源列表
         fields: null,
-        roleId:null,
+        roleId: null,
+        checkAll: false,
+        checkedCities: [],
+        cities: [],
+        isIndeterminate: true,
       };
     },
     created() {
@@ -27,12 +28,26 @@
       this.getAllResourceList();
     },
     methods: {
-      getAllResourceList(){
+      handleCheckAllChange(val) {
+        this.checkedCities = val ? cityOptions : [];
+        this.isIndeterminate = false;
+        this.$emit("parentEvent2",this.checkedCities);
+      },
+      handleCheckedCitiesChange(value) {
+        let checkedCount = value.length;
+        this.checkAll = checkedCount === this.cities.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
+        this.$emit("parentEvent2",this.checkedCities);
+      },
+      getAllResourceList() {
         fetchAllResourceList(this.roleId).then(response => {
-          console.log(this.roleId)
-          this.fields = response.data;
+          response.data.forEach(item=>{
+            cityOptions.push(item.name);
+            this.$emit("parentEvent2",this.checkedCities);
+          });
+          this.cities = response.data;
         });
-      }
+      },
     }
   }
 
