@@ -7,3 +7,9 @@ export function fetchList(params) {
   })
 }
 
+export function getTamplate() {
+  return request({
+    url:'/importData/getTamplate',
+    method:'get',
+  })
+}
