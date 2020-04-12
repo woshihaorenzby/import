@@ -23,3 +23,31 @@ export function do_import(data) {
     data:Qs.stringify(data),
   })
 }
+export function doDeleteByIds(params) {
+  return request({
+    url:'/importData/doDeleteByIds',
+    method:'get',
+    params:params,
+  })
+}
+export function updateImportData(id,data) {
+  return request({
+    url:'/importData/updateImportData/'+id,
+    method:'post',
+    data:data,
+  })
+}
+
+export function getImportData(id) {
+  return request({
+    url:'/importData/getImportData/'+id,
+    method:'get',
+  })
+}
+export function createImportData(data) {
+  return request({
+    url:'/importData/createImportData',
+    method:'post',
+    data:data,
+  })
+}

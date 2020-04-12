@@ -1,12 +1,9 @@
 <template> 
   <div class="app-container">
     <el-card class="filter-container" shadow="never">
-
-
       <div>
         <i class="el-icon-search"></i>
         <span>筛选搜索</span>
-
         <el-button
           style="float: right"
           @click="searchBrandList()"
@@ -14,7 +11,6 @@
           size="small">
           查询结果
         </el-button>
-
       </div>
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
@@ -25,8 +21,7 @@
       </div>
     </el-card>
     <el-card class="operate-container" shadow="never">
-      <i class="el-icon-tickets"></i>
-      <span>数据列表</span>
+      <el-button type="primary" @click="doDeleteByIds" style="float: left;text-align: center" size="mini">删除</el-button>
       <!--      <el-button-->
       <!--        class="btn-add"-->
       <!--        @click="addBrand()"-->
@@ -35,6 +30,9 @@
       <!--      </el-button>-->
       <el-button type="primary" @click="dialogFormVisible = true" style="float: right;text-align: center" size="mini">
         上传数据
+      </el-button>
+      <el-button type="primary" @click="addImportData()" style="float: right;text-align: center" size="mini">
+        添加
       </el-button>
       <el-dialog title="上传数据" :visible.sync="dialogFormVisible" style="text-align: center;width: 100%;">
         <el-button type="text" @click="getTamplate">下载模板</el-button>
@@ -101,6 +99,19 @@
       <el-table-column label="备注3" show-overflow-tooltip>
         <template slot-scope="scope">{{ scope.row.remark3}}</template>
       </el-table-column>
+      <el-table-column label="操作" width="200" align="center">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="handleUpdate(scope.$index, scope.row)">编辑
+          </el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)">删除
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="pagination-container">
       <el-pagination
@@ -117,7 +128,7 @@
   </div>
 </template>
 <script>
-  import {fetchList, getTamplate, do_import} from '@/api/importData'
+  import {fetchList, getTamplate, do_import,doDeleteByIds} from '@/api/importData'
   import XLSX from 'xlsx'
   import {getToken} from '@/utils/auth'
   import {formatDate} from '@/utils/date';
@@ -245,10 +256,8 @@
               let locations = [];
               if (workbook.Sheets.hasOwnProperty(sheet)) {
                 fromTo = sheetInfos['!ref'];
-                console.log("sheetInfos---------------------" + JSON.stringify(sheetInfos));
                 locations = _this.getLocationsKeys(fromTo)
               }
-              console.log('locations------------' + locations);
               for (let i = 0; i < locations.length; i++) {
                 let value = '';
                 try {
@@ -256,7 +265,6 @@
                 } catch (e) {
                 }
                 excelJson[locations[i]] = value
-                console.log('value--------------' + value);
                 if (value !== i) {
 // 校验失败reject
 // reject(locations[i] + '\'s parameter isn\'t ' + i)
@@ -268,7 +276,6 @@
 // excel数据转json字符串传入后台,后转map集合
             _this.excelParam.excelData = JSON.stringify(excelJson);
             _this.excelParam.excelArr = JSON.stringify(_this.excelParam.excelArr);
-            console.log('excelJson----------------------' + JSON.stringify(excelJson))
           }
           reader.readAsBinaryString(file)
         })
@@ -298,7 +305,6 @@
             this.excelParam.excelArr[j - 1] = JSON.stringify(excelKey);
           }
         }
-        console.log('list:' + this.excelParam.excelArr);
         return result;
       },
       handelOnError() {
@@ -331,7 +337,6 @@
       getList() {
         this.listLoading = true;
         fetchList(this.listQuery).then(response => {
-          console.log(response.data);
           this.listLoading = false;
           this.tableData = response.data;
           this.total = response.data.total;
@@ -342,12 +347,66 @@
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
+      doDeleteByIds(){
+        let ids = this.getIds();
+        if(ids!=null&&ids!=''){
+          this.$confirm('是否要删除该数据', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            doDeleteByIds({"ids":ids}).then(response =>{
+              if(response.code==200){
+                this.$message.success(response.message);
+              }else{
+                this.$message.error(response.message);
+              }
+              this.getList();
+            });
+          });
+        }else{
+          this.$message.error("请选择后再进行删除操作");
+        }
+      },
+      getIds(){
+        let ids = '';
+        if(this.multipleSelection!=null&&this.multipleSelection.length>0){
+          for (var i = 0;i<this.multipleSelection.length;i++){
+            ids+=this.multipleSelection[i].id+',';
+          }
+        }else{
+          this.$message.error("请选择后再进行删除操作");
+        }
+        return ids;
+      },
+      handleUpdate(index,row){
+        this.$router.push({path: '/importData/updateImportData', query: {id: row.id}})
+      },
+      addImportData(){
+        this.$router.push({path: '/importData/createImportData'});
+      },
+      handleDelete(index, row) {
+        this.$confirm('是否要删除该数据', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          doDeleteByIds({'ids':row.id}).then(response => {
+            this.$message({
+              message: '删除成功',
+              type: 'success',
+              duration: 1000
+            });
+            this.getList();
+          });
+        });
+      },
       getSummaries(param) {
         const {columns, data} = param;
         const sums = [];
         columns.forEach((column, index) => {
           if (index === 0) {
-            sums[index] = '总价';
+            sums[index] = '总计';
             return;
           }
           const values = data.map(item => Number(item[column.property]));

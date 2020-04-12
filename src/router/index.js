@@ -38,7 +38,7 @@ export const asyncRouterMap = [
   {
     path: '/importData',
     component: Layout,
-    redirect: '/importData/index',
+    redirect: '/importData/importData',
     name: 'importData',
     meta: {title: '数据', icon: 'product'},
     children: [{
@@ -46,6 +46,18 @@ export const asyncRouterMap = [
       name: 'importData',
       component: () => import('@/views/importData/index'),
       meta: {title: '数据列表', icon: 'product-list'}
+    },{
+      path: 'updateImportData',
+      name: 'updateImportData',
+      component: () => import('@/views/importData/update'),
+      meta: {title: '编辑数据'},
+      hidden:true
+    },{
+      path: 'createImportData',
+      name: 'createImportData',
+      component: () => import('@/views/importData/add'),
+      meta: {title: '编辑数据'},
+      hidden:true
     }
     ]
   },
