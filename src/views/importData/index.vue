@@ -2,11 +2,9 @@
   <div class="app-container">
     <el-card class="filter-container" shadow="never">
       <div>
-        <i class="el-icon-search"></i>
-        <span>筛选搜索</span>
         <el-button
           style="float: right"
-          @click="searchBrandList()"
+          @click="getList()"
           type="primary"
           size="small">
           查询结果
@@ -14,10 +12,40 @@
       </div>
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
-          <el-form-item label="输入搜索：">
-            <el-input style="width: 203px" v-model="listQuery.keyword" placeholder="品牌名称/关键字"></el-input>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.wangwangId" placeholder="旺旺号"></el-input>
           </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.info1" placeholder="A信息"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.info2" placeholder="B信息"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.storeName" placeholder="店铺"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.remark1" placeholder="备注1"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.remark2" placeholder="备注2"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.remark3" placeholder="备注3"></el-input>
+          </el-form-item>
+          <el-date-picker
+            v-model="pickerDate"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :picker-options="pickerOptions"
+            size = "small" >
+          </el-date-picker>
         </el-form>
+
       </div>
     </el-card>
     <el-card class="operate-container" shadow="never">
@@ -28,6 +56,9 @@
       <!--        size="mini">-->
       <!--        添加-->
       <!--      </el-button>-->
+      <el-button type="primary" @click="exportData" style="float: right;text-align: center" size="mini">
+        导出数据
+      </el-button>
       <el-button type="primary" @click="dialogFormVisible = true" style="float: right;text-align: center" size="mini">
         上传数据
       </el-button>
@@ -49,7 +80,7 @@
           :headers="headers"
           :file-list="fileList"
             >
-          <el-button type="text"  size="small">导入excle</el-button>
+          <el-button type="primary"  size="small">导入excle</el-button>
         </el-upload>
       </el-dialog>
     </el-card>
@@ -59,6 +90,7 @@
       tooltip-effect="dark"
       show-summary
       :summary-method="getSummaries"
+      @sort-change="changeTableSort"
       style="width: 100%"
       v-loading="listLoading"
       @selection-change="handleSelectionChange">
@@ -66,13 +98,12 @@
         type="selection"
         width="55">
       </el-table-column>
-      <el-table-column label="编号" width="100" align="center">
-        <template slot-scope="scope">{{scope.row.id}}</template>
+      <el-table-column label="编号" width="100"  sortable prop ="id">
       </el-table-column>
-      <el-table-column label="日期" sortable width="120">
+      <el-table-column label="日期"  width="120">
         <template slot-scope="scope">{{ scope.row.addTime|formatCreateTime}}</template>
       </el-table-column>
-      <el-table-column label="旺旺号" sortable width="120" >
+      <el-table-column label="旺旺号"  width="120" >
         <template slot-scope="scope">{{ scope.row.wangwangId}}</template>
       </el-table-column>
       <el-table-column label="佣金" sortable show-overflow-tooltip prop="commission">
@@ -128,7 +159,7 @@
   </div>
 </template>
 <script>
-  import {fetchList, getTamplate, do_import,doDeleteByIds} from '@/api/importData'
+  import {fetchList, getTamplate, do_import,doDeleteByIds,exportData} from '@/api/importData'
   import XLSX from 'xlsx'
   import {getToken} from '@/utils/auth'
   import {formatDate} from '@/utils/date';
@@ -137,6 +168,7 @@
     name: 'importDataList',
     data() {
       return {
+        pickerDate:"",
         uploadExcel: '',
         excelParam: {
           onBankId: '',
@@ -150,10 +182,42 @@
         dialogFormVisible: false,
         tableData: [],
         operateType: null,
+
         listQuery: {
-          keyword: null,
+          startDate:null,
+          endDate:null,
+          ids:null,
+          fieldName :null,
+      sortingType:null,
           pageNum: 1,
           pageSize: 10
+        },
+        pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start,end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
         },
         list: null,
         total: null,
@@ -180,6 +244,25 @@
       this.getList();
     },
     methods: {
+      exportData(){
+        this.listLoading = true;
+        if(this.pickerDate!=null&&this.pickerDate!=undefined&&this.pickerDate.length>0){
+          this.listQuery.startDate=this.pickerDate[0];
+          this.listQuery.endDate = this.pickerDate[1];
+        }
+        this.listQuery.ids=this.getIds();
+        exportData(this.listQuery).then((response) => {
+          this.listLoading = false;
+          const link = document.createElement('a')
+          let blob = new Blob([response.data], {type: 'application/vnd.ms-excel'});
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob);
+          link.setAttribute('download', '导出数据.xlsx');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+      },
       // 文件上传成功的钩子函数
       handleSuccess(res, file, index) {
         if (res.code === 0) {
@@ -336,9 +419,14 @@
       },
       getList() {
         this.listLoading = true;
+        if(this.pickerDate!=null&&this.pickerDate!=undefined&&this.pickerDate.length>0){
+          this.listQuery.startDate=this.pickerDate[0];
+          this.listQuery.endDate = this.pickerDate[1];
+        }
+        this.listQuery.ids=this.getIds();
         fetchList(this.listQuery).then(response => {
           this.listLoading = false;
-          this.tableData = response.data;
+          this.tableData = response.data.list;
           this.total = response.data.total;
           this.totalPage = response.data.totalPage;
           this.pageSize = response.data.pageSize;
@@ -374,8 +462,6 @@
           for (var i = 0;i<this.multipleSelection.length;i++){
             ids+=this.multipleSelection[i].id+',';
           }
-        }else{
-          this.$message.error("请选择后再进行删除操作");
         }
         return ids;
       },
@@ -408,20 +494,23 @@
           if (index === 0) {
             sums[index] = '总计';
             return;
+          }else if(index===1){
+            sums[index] = '-';
+            return;
           }
           const values = data.map(item => Number(item[column.property]));
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
               const value = Number(curr);
               if (!isNaN(value)) {
-                return prev + curr;
+                return prev+curr;
               } else {
                 return prev;
               }
             }, 0);
             sums[index] += ' 元';
           } else {
-            sums[index] = 'N/A';
+            sums[index] = '-';
           }
         });
 
@@ -436,6 +525,12 @@
         this.listQuery.pageNum = val;
         this.getList();
       },
+      changeTableSort(column){
+        //获取字段名称和排序类型
+        this.listQuery.fieldName = column.prop;
+        this.listQuery.sortingType = column.order==='descending'?'desc':"asc";
+        this.getList();
+      }
     }
   }
 </script>

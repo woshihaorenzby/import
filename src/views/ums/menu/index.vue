@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="用户管理菜单" name="0"></el-tab-pane>
-      <el-tab-pane label="后台管理菜单" name="1"></el-tab-pane>
     <el-card class="operate-container" shadow="never" >
       <span style="margin-top: 5px">数据列表</span>
       <el-button
@@ -130,7 +128,7 @@
       },
       getList(tabName) {
         this.listLoading = true;
-        this.listQuery.type = tabName==null?0:tabName;
+        this.listQuery.type = tabName==null?1:tabName;
         fetchList(this.parentId, this.listQuery).then(response => {
           this.listLoading = false;
           this.list = response.data.list;

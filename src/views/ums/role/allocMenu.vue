@@ -47,6 +47,7 @@
       getRoleMenu(roleId){
         listMenuByRole(roleId).then(response=>{
           let menuList = response.data;
+          console.log(menuList)
           let checkedMenuIds=[];
           if(menuList!=null&&menuList.length>0){
             for(let i=0;i<menuList.length;i++){

@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 import axios from '@/utils/axios'
 import Qs from 'qs'
-export function fetchList(params) {
+export function fetchList(data) {
   return request({
-    url:'/importData/listAll',
-    method:'get',
-    params:params
+    url:'/importData/listAll/'+data.pageNum+"/"+data.pageSize+'/'+data.fieldName+"/"+data.sortingType,
+    method:'post',
+    data:data
   })
 }
 
@@ -13,6 +13,14 @@ export function getTamplate() {
   return axios({
     url:'/importData/getTamplate',
     method:'post',
+    responseType:'blob'
+  })
+}
+export function exportData(data) {
+  return axios({
+    url:'/importData/exportData',
+    method:'post',
+    data:data,
     responseType:'blob'
   })
 }

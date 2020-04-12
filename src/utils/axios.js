@@ -11,8 +11,8 @@ const service = axios.create({
 // // request拦截器
 service.interceptors.request.use(config => {
   if (store.getters.token) {
-    config.headers['Authorization'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
-    config.headers['Content-Type'] = ('application/x-www-form-urlencoded;charset=UTF-8');
+    config.headers['Authorization'] = getToken(); // 让每个请求携带自定义token 请根据实际情况自行修改
+    // config.headers['Content-Type'] = ('application/x-www-form-urlencoded;charset=UTF-8');
   }
   return config
 }, error => {
