@@ -56,6 +56,22 @@
       <!--        size="mini">-->
       <!--        添加-->
       <!--      </el-button>-->
+      <el-row>
+        <el-popover
+          placement="bottom"
+          width="80"
+          trigger="click"
+          @hide="columnHide"
+          @show="columnShow"
+          style="float: right;text-align: center">
+          <div style="margin-top: 10px;">
+            <el-checkbox-group v-model="column2show" size="mini" >
+              <el-checkbox  v-for="cl in column2All" :key="cl.text"  :label="cl" style=" margin-left: 0px;" :checked="cl.checked" border>{{cl.text}}</el-checkbox>
+            </el-checkbox-group>
+          </div>
+          <el-button slot="reference" size="mini">列表选项</el-button>
+
+        </el-popover>
       <el-button type="primary" @click="exportData" style="float: right;text-align: center" size="mini">
         导出数据
       </el-button>
@@ -65,6 +81,8 @@
       <el-button type="primary" @click="addImportData()" style="float: right;text-align: center" size="mini">
         添加
       </el-button>
+
+      </el-row>
       <el-dialog title="上传数据" :visible.sync="dialogFormVisible" style="text-align: center;width: 100%;">
         <el-button type="text" @click="getTamplate">下载模板</el-button>
         <el-upload
@@ -93,52 +111,56 @@
       @sort-change="changeTableSort"
       style="width: 100%"
       v-loading="listLoading"
+      height="610"
+      border
       @selection-change="handleSelectionChange">
       <el-table-column
         type="selection"
         width="55">
       </el-table-column>
-      <el-table-column label="编号" width="100"  sortable prop ="id">
-      </el-table-column>
-      <el-table-column label="日期"  width="120">
-        <template slot-scope="scope">{{ scope.row.addTime|formatCreateTime}}</template>
-      </el-table-column>
-      <el-table-column label="旺旺号"  width="120" >
-        <template slot-scope="scope">{{ scope.row.wangwangId}}</template>
-      </el-table-column>
-      <el-table-column label="佣金" sortable show-overflow-tooltip prop="commission">
-      </el-table-column>
-      <el-table-column label="A金额" sortable show-overflow-tooltip prop="aPrice">
-      </el-table-column>
-      <el-table-column label="A信息" show-overflow-tooltip>
-        <template slot-scope="scope">{{ scope.row.aInfo}}</template>
-      </el-table-column>
-      <el-table-column label="B金额" sortable show-overflow-tooltip prop="bPrice">
-      </el-table-column>
-      <el-table-column label="B信息" show-overflow-tooltip>
-        <template slot-scope="scope">{{ scope.row.bInfo}}</template>
-      </el-table-column>
-      <el-table-column label="店铺" show-overflow-tooltip >
-        <template slot-scope="scope">{{ scope.row.storeName}}</template>
-      </el-table-column>
-      <el-table-column label="备注1" show-overflow-tooltip >
-        <template slot-scope="scope">{{ scope.row.remark1}}</template>
-      </el-table-column>
-      <el-table-column label="备注2" show-overflow-tooltip >
-        <template slot-scope="scope">{{ scope.row.remark2}}</template>
-      </el-table-column>
-      <el-table-column label="备注3" show-overflow-tooltip>
-        <template slot-scope="scope">{{ scope.row.remark3}}</template>
-      </el-table-column>
-      <el-table-column label="操作" width="200" align="center">
+<!--      <el-table-column label="id"  hidden="true" sortable prop ="id">-->
+      <el-table-column v-for="cl in column2show" :label="cl.text" :key="cl.lab" sortable v-if="cl.lab!=='addTime'&&cl.lab!=='id'" :prop="cl.lab"></el-table-column>
+<!--      <el-table-column label="编号" width="100"  sortable prop ="id">-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="日期"  width="120">-->
+<!--        <template slot-scope="scope">{{ scope.row.addTime|formatCreateTime}}</template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="旺旺号"  width="120" >-->
+<!--        <template slot-scope="scope">{{ scope.row.wangwangId}}</template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="佣金" sortable show-overflow-tooltip prop="commission">-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="A金额" sortable show-overflow-tooltip prop="aPrice">-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="A信息" show-overflow-tooltip>-->
+<!--        <template slot-scope="scope">{{ scope.row.aInfo}}</template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="B金额" sortable show-overflow-tooltip prop="bPrice">-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="B信息" show-overflow-tooltip>-->
+<!--        <template slot-scope="scope">{{ scope.row.bInfo}}</template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="店铺" show-overflow-tooltip >-->
+<!--        <template slot-scope="scope">{{ scope.row.storeName}}</template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="备注1" show-overflow-tooltip >-->
+<!--        <template slot-scope="scope">{{ scope.row.remark1}}</template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="备注2" show-overflow-tooltip prop="remark2">-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="备注3" show-overflow-tooltip>-->
+<!--        <template slot-scope="scope">{{ scope.row.remark3}}</template>-->
+<!--      </el-table-column>-->
+      <el-table-column label="操作" width='100' align="center">
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="handleUpdate(scope.$index, scope.row)">编辑
+            type="text"
+          @click="handleUpdate(scope.$index, scope.row)">编辑
           </el-button>
           <el-button
             size="mini"
-            type="danger"
+            type="text"
             @click="handleDelete(scope.$index, scope.row)">删除
           </el-button>
         </template>
@@ -151,7 +173,7 @@
         @current-change="handleCurrentChange"
         layout="total, sizes,prev, pager, next,jumper"
         :page-size="listQuery.pageSize"
-        :page-sizes="[5,10,15]"
+        :page-sizes="[20,50,100]"
         :current-page.sync="listQuery.pageNum"
         :total="total">
       </el-pagination>
@@ -163,11 +185,28 @@
   import XLSX from 'xlsx'
   import {getToken} from '@/utils/auth'
   import {formatDate} from '@/utils/date';
+  import Cookies from 'js-cookie';
 
   export default {
     name: 'importDataList',
     data() {
       return {
+        hasCheck : {},
+      column2show:Cookies.get('column2show')==null||Cookies.get('column2show')==undefined?this.column2All:JSON.parse(Cookies.get('column2show')),
+        column2All:[
+          {"text":"年月日","lab":'addTime',"checked":false},
+          {"text":"编号","lab":'code',"checked":false},
+          {"text":"A信息","lab":'aInfo',"checked":false},
+          {"text":"旺旺号","lab":'wangwangId',"checked":false},
+          {"text":"A金额","lab":'aPrice',"checked":false},
+          {"text":"B金额","lab":'bPrice',"checked":false},
+          {"text":"C佣金","lab":'commission',"checked":false},
+          {"text":"B信息","lab":'bInfo',"checked":false},
+          {"text":" 备注1","lab":'remark1',"checked":false},
+          {"text":" 备注2","lab":'remark2',"checked":false},
+          {"text":" 备注3","lab":'remark3',"checked":false},
+
+        ],
         pickerDate:"",
         uploadExcel: '',
         excelParam: {
@@ -190,7 +229,7 @@
           fieldName :null,
       sortingType:null,
           pageNum: 1,
-          pageSize: 10
+          pageSize: 50
         },
         pickerOptions: {
           shortcuts: [{
@@ -244,6 +283,22 @@
       this.getList();
     },
     methods: {
+      columnHide(){
+        Cookies.remove('column2show');
+        Cookies.set('column2show', JSON.stringify(this.column2show), { expires: 7, path: '' });
+
+      },
+      columnShow(){
+       if( Cookies.get('column2show')!==null&&Cookies.get('column2show')!==undefined){
+         let v = JSON.parse(Cookies.get('column2show'));
+         for(let i = 0;i<v.length;i++){
+           this.hasCheck.set(v.text,true);
+         }
+         console.log(this.hasCheck);
+       }else{
+
+       }
+      },
       exportData(){
         this.listLoading = true;
         if(this.pickerDate!=null&&this.pickerDate!=undefined&&this.pickerDate.length>0){
@@ -418,6 +473,8 @@
         })
       },
       getList() {
+        let column2show = this.column2show;
+        console.log(column2show);
         this.listLoading = true;
         if(this.pickerDate!=null&&this.pickerDate!=undefined&&this.pickerDate.length>0){
           this.listQuery.startDate=this.pickerDate[0];
@@ -547,7 +604,24 @@
   .el-dialog__header {
     text-align: center;
   }
+  .el-checkbox{
+    display:block;
+    height:20px;
+    line-height:20px;
+    padding:0 5px;
+    margin-right:0;
+    font-size:12px;
+    border: 1px solid transparent;
+  }
 
+  .el-popover{
+    width: 130px;
+    position: absolute;
+    top: 287px;
+    left: 90px;
+    transform-origin: center top;
+    z-index: 2001;
+  }
 </style>
 
 
