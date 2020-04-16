@@ -61,12 +61,10 @@
           placement="bottom"
           width="80"
           trigger="click"
-          @hide="columnHide"
-          @show="columnShow"
           style="float: right;text-align: center">
           <div style="margin-top: 10px;">
-            <el-checkbox-group v-model="column2show" size="mini" >
-              <el-checkbox  v-for="cl in column2All" :key="cl.text"  :label="cl" style=" margin-left: 0px;" :checked="cl.checked" border>{{cl.text}}</el-checkbox>
+            <el-checkbox-group v-model="column2show" size="mini" @change="handleCheckedCitiesChange">
+              <el-checkbox  v-for="cl in column2All" :key="cl.lab"  :label="cl.lab" style=" margin-left: 0px;"  border>{{cl.text}}</el-checkbox>
             </el-checkbox-group>
           </div>
           <el-button slot="reference" size="mini">列表选项</el-button>
@@ -119,7 +117,7 @@
         width="55">
       </el-table-column>
 <!--      <el-table-column label="id"  hidden="true" sortable prop ="id">-->
-      <el-table-column v-for="cl in column2show" :label="cl.text" :key="cl.lab" sortable v-if="cl.lab!=='addTime'&&cl.lab!=='id'" :prop="cl.lab"></el-table-column>
+      <el-table-column v-for="cl in column2showData" :label="cl.text" :key="cl.lab" sortable v-if="cl.lab!=='addTime'&&cl.lab!=='id'" :prop="cl.lab"></el-table-column>
 <!--      <el-table-column label="编号" width="100"  sortable prop ="id">-->
 <!--      </el-table-column>-->
 <!--      <el-table-column label="日期"  width="120">-->
@@ -191,8 +189,8 @@
     name: 'importDataList',
     data() {
       return {
-        hasCheck : {},
-      column2show:Cookies.get('column2show')==null||Cookies.get('column2show')==undefined?this.column2All:JSON.parse(Cookies.get('column2show')),
+        column2show:[],
+        column2showData:[],
         column2All:[
           {"text":"年月日","lab":'addTime',"checked":false},
           {"text":"编号","lab":'code',"checked":false},
@@ -281,23 +279,38 @@
     },
     created() {
       this.getList();
+      this.getColumn();
     },
     methods: {
-      columnHide(){
-        Cookies.remove('column2show');
-        Cookies.set('column2show', JSON.stringify(this.column2show), { expires: 7, path: '' });
-
+      handleCheckedCitiesChange(){
+        this.column2showData = [];
+        Cookies.remove('column2show_import1');
+        this.column2show.forEach(cl=>{
+          let text = "";
+          this.column2All.forEach(ca=>{
+            if(ca.lab===cl){
+              text =ca.text;
+              this.column2showData.push({'text':text,"lab":cl,"checked":true});
+              return;
+            }
+          });
+        });
+        console.log(this.column2showData);
+        Cookies.set('column2show_import1', JSON.stringify(this.column2showData), { expires: 7, path: '/' });
       },
-      columnShow(){
-       if( Cookies.get('column2show')!==null&&Cookies.get('column2show')!==undefined){
-         let v = JSON.parse(Cookies.get('column2show'));
-         for(let i = 0;i<v.length;i++){
-           this.hasCheck.set(v.text,true);
-         }
-         console.log(this.hasCheck);
-       }else{
-
-       }
+      getColumn(){//回显
+        if( Cookies.get('column2show_import1')!==null&&Cookies.get('column2show_import1')!==undefined){
+          this.column2showData = JSON.parse(Cookies.get('column2show_import1'));
+        }else{
+          this.column2showData = this.column2All;
+        }
+        if(this.column2showData!==null&&this.column2showData!==undefined&&this.column2showData.length>0){
+          this.column2show = [];
+          this.column2showData.forEach(cld=>{
+            this.column2show.push(cld.lab);
+          });
+        }
+        // this.column2show = this.column2All;
       },
       exportData(){
         this.listLoading = true;
