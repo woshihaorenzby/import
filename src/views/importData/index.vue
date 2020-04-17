@@ -42,7 +42,7 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             :picker-options="pickerOptions"
-            size = "small" >
+            size="small">
           </el-date-picker>
         </el-form>
 
@@ -50,12 +50,6 @@
     </el-card>
     <el-card class="operate-container" shadow="never">
       <el-button type="primary" @click="doDeleteByIds" style="float: left;text-align: center" size="mini">删除</el-button>
-      <!--      <el-button-->
-      <!--        class="btn-add"-->
-      <!--        @click="addBrand()"-->
-      <!--        size="mini">-->
-      <!--        添加-->
-      <!--      </el-button>-->
       <el-row>
         <el-popover
           placement="bottom"
@@ -64,22 +58,23 @@
           style="float: right;text-align: center">
           <div style="margin-top: 10px;">
             <el-checkbox-group v-model="column2show" size="mini" @change="handleCheckedCitiesChange">
-              <el-checkbox  v-for="cl in column2All" :key="cl.lab"  :label="cl.lab" style=" margin-left: 0px;"  border>{{cl.text}}</el-checkbox>
+              <el-checkbox v-for="cl in column2All" :key="cl.lab" :label="cl.lab" style=" margin-left: 0px;" border>
+                {{cl.text}}
+              </el-checkbox>
             </el-checkbox-group>
           </div>
           <el-button slot="reference" size="mini">列表选项</el-button>
 
         </el-popover>
-      <el-button type="primary" @click="exportData" style="float: right;text-align: center" size="mini">
-        导出数据
-      </el-button>
-      <el-button type="primary" @click="dialogFormVisible = true" style="float: right;text-align: center" size="mini">
-        上传数据
-      </el-button>
-      <el-button type="primary" @click="addImportData()" style="float: right;text-align: center" size="mini">
-        添加
-      </el-button>
-
+        <el-button type="primary" @click="exportData" style="float: right;text-align: center" size="mini">
+          导出数据
+        </el-button>
+        <el-button type="primary" @click="dialogFormVisible = true" style="float: right;text-align: center" size="mini">
+          上传数据
+        </el-button>
+        <el-button type="primary" @click="addImportData()" style="float: right;text-align: center" size="mini">
+          添加
+        </el-button>
       </el-row>
       <el-dialog title="上传数据" :visible.sync="dialogFormVisible" style="text-align: center;width: 100%;">
         <el-button type="text" @click="getTamplate">下载模板</el-button>
@@ -116,45 +111,24 @@
         type="selection"
         width="55">
       </el-table-column>
-<!--      <el-table-column label="id"  hidden="true" sortable prop ="id">-->
-      <el-table-column v-for="cl in column2showData" :label="cl.text" :key="cl.lab" sortable v-if="cl.lab!=='addTime'&&cl.lab!=='id'" :prop="cl.lab"></el-table-column>
-<!--      <el-table-column label="编号" width="100"  sortable prop ="id">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="日期"  width="120">-->
-<!--        <template slot-scope="scope">{{ scope.row.addTime|formatCreateTime}}</template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="旺旺号"  width="120" >-->
-<!--        <template slot-scope="scope">{{ scope.row.wangwangId}}</template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="佣金" sortable show-overflow-tooltip prop="commission">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="A金额" sortable show-overflow-tooltip prop="aPrice">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="A信息" show-overflow-tooltip>-->
-<!--        <template slot-scope="scope">{{ scope.row.aInfo}}</template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="B金额" sortable show-overflow-tooltip prop="bPrice">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="B信息" show-overflow-tooltip>-->
-<!--        <template slot-scope="scope">{{ scope.row.bInfo}}</template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="店铺" show-overflow-tooltip >-->
-<!--        <template slot-scope="scope">{{ scope.row.storeName}}</template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="备注1" show-overflow-tooltip >-->
-<!--        <template slot-scope="scope">{{ scope.row.remark1}}</template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="备注2" show-overflow-tooltip prop="remark2">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="备注3" show-overflow-tooltip>-->
-<!--        <template slot-scope="scope">{{ scope.row.remark3}}</template>-->
-<!--      </el-table-column>-->
+      <template v-for="cl in column2showData">
+        <el-table-column v-if="cl.type_str==='num'&& cl.lab!=='id'" :label="cl.text" :key="cl.lab" :prop="cl.lab"
+                         sortable></el-table-column>
+        <el-table-column v-else-if="cl.type_str==='data'&& cl.lab!=='id'" :label="cl.text" :key="cl.lab" sortable :prop="cl.lab">
+          <template slot-scope="scope">{{ scope.row[cl.lab]|formatCreateTime}}</template>
+        </el-table-column>
+        <el-table-column v-else-if="cl.type_str==='text'&&cl.lab!=='id'" :label="cl.text" :key="cl.lab">
+          <template slot-scope="scope">{{ scope.row[cl.lab]}}</template>
+        </el-table-column>
+        <el-table-column v-else-if="cl.lab==='id'" :label="cl.text" :key="cl.lab" :prop="cl.lab" hidden>
+        </el-table-column>
+      </template>
       <el-table-column label="操作" width='100' align="center">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
-          @click="handleUpdate(scope.$index, scope.row)">编辑
+            @click="handleUpdate(scope.$index, scope.row)">编辑
           </el-button>
           <el-button
             size="mini"
@@ -179,7 +153,7 @@
   </div>
 </template>
 <script>
-  import {fetchList, getTamplate, do_import,doDeleteByIds,exportData} from '@/api/importData'
+  import {fetchList, getTamplate, do_import, doDeleteByIds, exportData} from '@/api/importData'
   import XLSX from 'xlsx'
   import {getToken} from '@/utils/auth'
   import {formatDate} from '@/utils/date';
@@ -189,23 +163,23 @@
     name: 'importDataList',
     data() {
       return {
-        column2show:[],
-        column2showData:[],
-        column2All:[
-          {"text":"年月日","lab":'addTime',"checked":false},
-          {"text":"编号","lab":'code',"checked":false},
-          {"text":"A信息","lab":'aInfo',"checked":false},
-          {"text":"旺旺号","lab":'wangwangId',"checked":false},
-          {"text":"A金额","lab":'aPrice',"checked":false},
-          {"text":"B金额","lab":'bPrice',"checked":false},
-          {"text":"C佣金","lab":'commission',"checked":false},
-          {"text":"B信息","lab":'bInfo',"checked":false},
-          {"text":" 备注1","lab":'remark1',"checked":false},
-          {"text":" 备注2","lab":'remark2',"checked":false},
-          {"text":" 备注3","lab":'remark3',"checked":false},
-
+        column2show: [],
+        column2showData: [],
+        column2All: [
+          {"text": "年月日", "lab": 'addTime', "type_str": 'data', "order": 1},
+          {"text": "编号", "lab": 'code', "type_str": 'text', "order": 2},
+          {"text": "A信息", "lab": 'aInfo', "type_str": 'text', "order": 3},
+          {"text": "旺旺号", "lab": 'wangwangId', "type_str": 'text', "order": 4},
+          {"text": "A金额", "lab": 'aPrice', "type_str": 'num', "order": 5},
+          {"text": "B金额", "lab": 'bPrice', "type_str": 'num', "order": 6},
+          {"text": "C佣金", "lab": 'commission', "type_str": 'num', "order": 7},
+          {"text": "B信息", "lab": 'bInfo', "type_str": 'text', "order": 8},
+          {"text": "创建人", "lab": 'createUsername', "type_str": 'text', "order": 9},
+          {"text": " 备注1", "lab": 'remark1', "type_str": 'text', "order": 10},
+          {"text": " 备注2", "lab": 'remark2', "type_str": 'text', "order": 11},
+          {"text": " 备注3", "lab": 'remark3', "type_str": 'text', "order": 12},
         ],
-        pickerDate:"",
+        pickerDate: "",
         uploadExcel: '',
         excelParam: {
           onBankId: '',
@@ -221,11 +195,11 @@
         operateType: null,
 
         listQuery: {
-          startDate:null,
-          endDate:null,
-          ids:null,
-          fieldName :null,
-      sortingType:null,
+          startDate: null,
+          endDate: null,
+          ids: null,
+          fieldName: null,
+          sortingType: null,
           pageNum: 1,
           pageSize: 50
         },
@@ -236,7 +210,7 @@
               const end = new Date();
               const start = new Date();
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', [start,end]);
+              picker.$emit('pick', [start, end]);
             }
           }, {
             text: '最近一个月',
@@ -282,43 +256,58 @@
       this.getColumn();
     },
     methods: {
-      handleCheckedCitiesChange(){
+      handleCheckedCitiesChange() {
         this.column2showData = [];
         Cookies.remove('column2show_import1');
-        this.column2show.forEach(cl=>{
+        this.column2show.forEach(cl => {
           let text = "";
-          this.column2All.forEach(ca=>{
-            if(ca.lab===cl){
-              text =ca.text;
-              this.column2showData.push({'text':text,"lab":cl,"checked":true});
+          let order = "";
+          let type_str = "";
+          this.column2All.forEach(ca => {
+            if (ca.lab === cl) {
+              text = ca.text;
+              order = ca.order;
+              type_str = ca.type_str;
+              this.column2showData.push({'text': text, "lab": cl, "type_str": type_str, 'order': order});
               return;
             }
           });
         });
-        console.log(this.column2showData);
-        Cookies.set('column2show_import1', JSON.stringify(this.column2showData), { expires: 7, path: '/' });
+        this.column2showData.sort((a, b) => {
+          return a.order < b.order;
+        });
+        this.column2showData.sort((a, b) => {
+          if (a.order > b.order) {
+            return 1;
+          } else if (a.order == b.order) {
+            return 0;
+          } else {
+            return -1;
+          }
+        })
+        Cookies.set('column2show_import1', JSON.stringify(this.column2showData), {expires: 7, path: '/'});
       },
-      getColumn(){//回显
-        if( Cookies.get('column2show_import1')!==null&&Cookies.get('column2show_import1')!==undefined){
+      getColumn() {//回显
+        if (Cookies.get('column2show_import1') !== null && Cookies.get('column2show_import1') !== undefined) {
           this.column2showData = JSON.parse(Cookies.get('column2show_import1'));
-        }else{
+        } else {
           this.column2showData = this.column2All;
         }
-        if(this.column2showData!==null&&this.column2showData!==undefined&&this.column2showData.length>0){
+        if (this.column2showData !== null && this.column2showData !== undefined && this.column2showData.length > 0) {
           this.column2show = [];
-          this.column2showData.forEach(cld=>{
+          this.column2showData.forEach(cld => {
             this.column2show.push(cld.lab);
           });
         }
         // this.column2show = this.column2All;
       },
-      exportData(){
+      exportData() {
         this.listLoading = true;
-        if(this.pickerDate!=null&&this.pickerDate!=undefined&&this.pickerDate.length>0){
-          this.listQuery.startDate=this.pickerDate[0];
+        if (this.pickerDate != null && this.pickerDate != undefined && this.pickerDate.length > 0) {
+          this.listQuery.startDate = this.pickerDate[0];
           this.listQuery.endDate = this.pickerDate[1];
         }
-        this.listQuery.ids=this.getIds();
+        this.listQuery.ids = this.getIds();
         exportData(this.listQuery).then((response) => {
           this.listLoading = false;
           const link = document.createElement('a')
@@ -449,7 +438,6 @@
           for (let i = 0; i < total; i++) {
             result.push(this.getCharByNum(i) + j);
             excelKey[i] = this.getCharByNum(i) + j;
-            console.log(j - 1 + ',' + i + ',' + this.getCharByNum(i) + j);
           }
 // 存excel key值到数组中,用于后台更好处理数据
           if (excelKey !== []) {
@@ -475,7 +463,7 @@
       },
       getTamplate() {
         getTamplate().then((response) => {
-          const link = document.createElement('a')
+          const link = document.createElement('a');
           let blob = new Blob([response.data], {type: 'application/vnd.ms-excel'});
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob);
@@ -489,11 +477,11 @@
         let column2show = this.column2show;
         console.log(column2show);
         this.listLoading = true;
-        if(this.pickerDate!=null&&this.pickerDate!=undefined&&this.pickerDate.length>0){
-          this.listQuery.startDate=this.pickerDate[0];
+        if (this.pickerDate != null && this.pickerDate != undefined && this.pickerDate.length > 0) {
+          this.listQuery.startDate = this.pickerDate[0];
           this.listQuery.endDate = this.pickerDate[1];
         }
-        this.listQuery.ids=this.getIds();
+        this.listQuery.ids = this.getIds();
         fetchList(this.listQuery).then(response => {
           this.listLoading = false;
           this.tableData = response.data.list;
@@ -505,41 +493,41 @@
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
-      doDeleteByIds(){
+      doDeleteByIds() {
         let ids = this.getIds();
-        if(ids!=null&&ids!=''){
+        if (ids != null && ids != '') {
           this.$confirm('是否要删除该数据', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            doDeleteByIds({"ids":ids}).then(response =>{
-              if(response.code==200){
+            doDeleteByIds({"ids": ids}).then(response => {
+              if (response.code == 200) {
                 this.$message.success(response.message);
-              }else{
+              } else {
                 this.$message.error(response.message);
               }
               this.multipleSelection = null;
               this.getList();
             });
           });
-        }else{
+        } else {
           this.$message.error("请选择后再进行删除操作");
         }
       },
-      getIds(){
+      getIds() {
         let ids = '';
-        if(this.multipleSelection!=null&&this.multipleSelection.length>0){
-          for (var i = 0;i<this.multipleSelection.length;i++){
-            ids+=this.multipleSelection[i].id+',';
+        if (this.multipleSelection != null && this.multipleSelection.length > 0) {
+          for (var i = 0; i < this.multipleSelection.length; i++) {
+            ids += this.multipleSelection[i].id + ',';
           }
         }
         return ids;
       },
-      handleUpdate(index,row){
+      handleUpdate(index, row) {
         this.$router.push({path: '/importData/updateImportData', query: {id: row.id}})
       },
-      addImportData(){
+      addImportData() {
         this.$router.push({path: '/importData/createImportData'});
       },
       handleDelete(index, row) {
@@ -548,7 +536,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          doDeleteByIds({'ids':row.id}).then(response => {
+          doDeleteByIds({'ids': row.id}).then(response => {
             this.$message({
               message: '删除成功',
               type: 'success',
@@ -565,7 +553,7 @@
           if (index === 0) {
             sums[index] = '总计';
             return;
-          }else if(index===1){
+          } else if (index === 1) {
             sums[index] = '-';
             return;
           }
@@ -573,13 +561,17 @@
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
               const value = Number(curr);
-              if (!isNaN(value)) {
-                return prev+curr;
+              if (!isNaN(value) && value > 0) {
+                return prev + curr;
               } else {
                 return prev;
               }
             }, 0);
-            sums[index] = sums[index].toFixed(2)+' 元';
+            if (sums[index] > 0) {
+              sums[index] = sums[index].toFixed(2) + ' 元';
+            } else {
+              sums[index] = '-';
+            }
           } else {
             sums[index] = '-';
           }
@@ -596,10 +588,10 @@
         this.listQuery.pageNum = val;
         this.getList();
       },
-      changeTableSort(column){
+      changeTableSort(column) {
         //获取字段名称和排序类型
         this.listQuery.fieldName = column.prop;
-        this.listQuery.sortingType = column.order==='descending'?'desc':"asc";
+        this.listQuery.sortingType = column.order === 'descending' ? 'desc' : "asc";
         this.getList();
       }
     }
@@ -617,17 +609,18 @@
   .el-dialog__header {
     text-align: center;
   }
-  .el-checkbox{
-    display:block;
-    height:20px;
-    line-height:20px;
-    padding:0 5px;
-    margin-right:0;
-    font-size:12px;
+
+  .el-checkbox {
+    display: block;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 5px;
+    margin-right: 0;
+    font-size: 12px;
     border: 1px solid transparent;
   }
 
-  .el-popover{
+  .el-popover {
     width: 130px;
     position: absolute;
     top: 287px;
