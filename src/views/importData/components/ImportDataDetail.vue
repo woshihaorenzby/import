@@ -1,26 +1,32 @@
 <template> 
   <el-card class="form-container" shadow="never">
     <el-form :model="importData" :rules="rules" ref="importDataFrom" label-width="150px">
-      <el-form-item label="旺旺号：" prop="wangwangId">
-        <el-input v-model="importData.wangwangId"></el-input>
-      </el-form-item>
-      <el-form-item label="佣金：" prop="commission">
-        <el-input v-model="importData.commission"></el-input>
-      </el-form-item>
-      <el-form-item label="A金额：" prop="aPrice">
-        <el-input v-model="importData.aPrice"></el-input>
+      <el-form-item label="编号：" prop="code">
+        <el-input v-model="importData.code"></el-input>
       </el-form-item>
       <el-form-item label="A信息：" prop="aInfo">
         <el-input v-model="importData.aInfo"></el-input>
       </el-form-item>
+      <el-form-item label="旺旺号：" prop="wangwangId">
+        <el-input v-model="importData.wangwangId"></el-input>
+      </el-form-item>
+      <el-form-item label="A金额：" prop="aPrice">
+        <el-input v-model="importData.aPrice"></el-input>
+      </el-form-item>
+      <el-form-item label="店名：" prop="storeName">
+        <el-input v-model="importData.storeName"></el-input>
+      </el-form-item>
       <el-form-item label="B金额：" prop="bPrice">
         <el-input v-model="importData.bPrice"></el-input>
+      </el-form-item>
+      <el-form-item label="C佣金：" prop="commission">
+        <el-input v-model="importData.commission"></el-input>
       </el-form-item>
       <el-form-item label="B信息：" prop="bInfo">
         <el-input v-model="importData.bInfo"></el-input>
       </el-form-item>
-      <el-form-item label="店名：" prop="storeName">
-        <el-input v-model="importData.storeName"></el-input>
+      <el-form-item label="创建人：" prop="createUsername">
+        <el-input v-model="importData.createUsername" disabled></el-input>
       </el-form-item>
       <el-form-item label="备注1：" prop="remark1">
         <el-input v-model="importData.remark1"></el-input>

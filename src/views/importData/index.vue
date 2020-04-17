@@ -369,10 +369,15 @@
       },
       // 解析excel文件
       do_import() {
-        do_import(this.excelParam);
+        this.listLoading = true;
+        do_import(this.excelParam).then(response=>{
+          this.listLoading = false;
+          this.dialogFormVisible =false;
+          this.getList();
+        });
       },
       readExcel(file) {
-        let _this = this
+        let _this = this;
 // 初始化参数
         _this.excelParam.excelArr = []
         _this.excelParam.excelData = ''
