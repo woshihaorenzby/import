@@ -93,6 +93,16 @@
             >
           <el-button type="primary"  size="small">导入excle</el-button>
         </el-upload>
+        <div style="margin: 20px 0;"></div>
+        <el-input
+          type="textarea"
+          placeholder="请输入内容"
+          v-model="textarea"
+          show-word-limit
+          disabled
+          style="height: 100px"
+        >
+        </el-input>
       </el-dialog>
     </el-card>
     <el-table
@@ -163,6 +173,7 @@
     name: 'importDataList',
     data() {
       return {
+        textarea: '',
         column2show: [],
         column2showData: [],
         column2All: [
@@ -632,6 +643,12 @@
     left: 90px;
     transform-origin: center top;
     z-index: 2001;
+  }
+  .el-textarea__inner {
+    min-height: 33px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    height: 180px;
   }
 </style>
 

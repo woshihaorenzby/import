@@ -25,9 +25,6 @@
       <el-form-item label="B信息：" prop="bInfo">
         <el-input v-model="importData.bInfo"></el-input>
       </el-form-item>
-      <el-form-item label="创建人：" prop="createUsername">
-        <el-input v-model="importData.createUsername" disabled></el-input>
-      </el-form-item>
       <el-form-item label="备注1：" prop="remark1">
         <el-input v-model="importData.remark1"></el-input>
       </el-form-item>
