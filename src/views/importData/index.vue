@@ -22,6 +22,9 @@
             <el-input style="width: 203px" v-model="listQuery.storeName" placeholder="店铺"></el-input>
           </el-form-item>
           <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.createUserName" placeholder="创建人"></el-input>
+          </el-form-item>
+          <el-form-item>
             <el-input style="width: 203px" v-model="listQuery.wangwangId" placeholder="旺旺号"></el-input>
           </el-form-item>
           <el-form-item>
@@ -56,8 +59,8 @@
       </div>
     </el-card>
     <el-card class="operate-container" shadow="never">
-      <el-button type="primary" @click="doDeleteByIds" style="float: left;text-align: center" size="mini">删除</el-button>
       <el-row>
+        <el-button type="primary" @click="doDeleteByIds" style="float: left;text-align: center" size="mini">删除</el-button>
         <el-popover
           placement="bottom"
           width="80"
@@ -169,7 +172,7 @@
   </div>
 </template>
 <script>
-  import {fetchList, getTamplate, do_import, doDeleteByIds, exportData} from '@/api/importData'
+  import {fetchList, getTamplate, do_import, doDeleteByIds, exportData,doDeleteHis} from '@/api/importData'
   import XLSX from 'xlsx'
   import {getToken} from '@/utils/auth'
   import {formatDate} from '@/utils/date';
@@ -507,7 +510,6 @@
       },
       getList() {
         let column2show = this.column2show;
-        console.log(column2show);
         this.listLoading = true;
         if (this.pickerDate != null && this.pickerDate != undefined && this.pickerDate.length > 0) {
           this.listQuery.startDate = this.pickerDate[0];
@@ -533,25 +535,45 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            doDeleteByIds({"ids": ids}).then(response => {
-              if (response.code == 200) {
-                this.$message.success(response.message);
-              } else {
-                this.$message.error(response.message);
-              }
-              this.multipleSelection = null;
-              this.getList();
-            });
+            this.deleteData(ids);
           });
         } else {
           this.$message.error("请选择后再进行删除操作");
         }
       },
+      deleteData(ids){
+        doDeleteHis({"ids":ids}).then(res=>{
+          if(res.data===null||res.data===''){
+            this.multipleSelection = null;
+            this.getList();
+            this.$message.success("数据删除成功");
+          }else{
+            doDeleteByIds({"ids": res.data}).then(response => {
+              if (response.code == 200) {
+                this.multipleSelection = null;
+                this.getList();
+                this.$message.success(response.message);
+              } else {
+                this.multipleSelection = null;
+                this.getList();
+                if((ids+"").length!==res.data.length){
+                  this.$message.error("您创建的数据已经删除，其余数据您无权删除");
+                }else{
+                  this.$message.error("您暂无权限删除这些数据");
+                }
+              }
+            });
+          }
+        });
+      },
       getIds() {
         let ids = '';
         if (this.multipleSelection != null && this.multipleSelection.length > 0) {
           for (var i = 0; i < this.multipleSelection.length; i++) {
-            ids += this.multipleSelection[i].id + ',';
+            ids += this.multipleSelection[i].id ;
+            if(i!==this.multipleSelection.length-1){
+              ids += ',';
+            }
           }
         }
         return ids;
@@ -568,14 +590,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          doDeleteByIds({'ids': row.id}).then(response => {
-            this.$message({
-              message: '删除成功',
-              type: 'success',
-              duration: 1000
-            });
-            this.getList();
-          });
+          this.deleteData(row.id);
         });
       },
       getSummaries(param) {

@@ -38,6 +38,13 @@ export function doDeleteByIds(params) {
     params:params,
   })
 }
+export function doDeleteHis(params) {
+  return request({
+    url:'/importData/listAll/doDeleteHis',
+    method:'get',
+    params:params,
+  })
+}
 export function updateImportData(id,data) {
   return request({
     url:'/importData/updateImportData/'+id,
