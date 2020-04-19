@@ -29,7 +29,14 @@ service.interceptors.response.use(
      * code为非200是抛错 可结合自己业务进行修改
      */
     const res = response.data
+    console.log(response);
     if (res.code !== 200) {
+      if(res.code===500){
+        if(res.data!=null&&res.data.length>0){
+          return response.data;
+          console.log("response.data---------"+JSON.stringify(response));
+        }
+      }
       Message({
         message: res.message,
         type: 'error',

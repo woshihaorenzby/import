@@ -13,6 +13,15 @@
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
           <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.anyColumn" placeholder="任意列"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.code" placeholder="编号"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.storeName" placeholder="店铺"></el-input>
+          </el-form-item>
+          <el-form-item>
             <el-input style="width: 203px" v-model="listQuery.wangwangId" placeholder="旺旺号"></el-input>
           </el-form-item>
           <el-form-item>
@@ -21,9 +30,7 @@
           <el-form-item>
             <el-input style="width: 203px" v-model="listQuery.info2" placeholder="B信息"></el-input>
           </el-form-item>
-          <el-form-item>
-            <el-input style="width: 203px" v-model="listQuery.storeName" placeholder="店铺"></el-input>
-          </el-form-item>
+
           <el-form-item>
             <el-input style="width: 203px" v-model="listQuery.remark1" placeholder="备注1"></el-input>
           </el-form-item>
@@ -96,11 +103,10 @@
         <div style="margin: 20px 0;"></div>
         <el-input
           type="textarea"
-          placeholder="请输入内容"
+          placeholder="导入结果"
           v-model="textarea"
-          show-word-limit
           disabled
-          style="height: 100px"
+          :rows="15"
         >
         </el-input>
       </el-dialog>
@@ -383,8 +389,18 @@
         this.listLoading = true;
         do_import(this.excelParam).then(response=>{
           this.listLoading = false;
-          this.dialogFormVisible =false;
-          this.getList();
+          if(response.code==200){
+            this.textarea = "";
+            this.$message.success("导入成功");
+            this.dialogFormVisible =false;
+            this.getList();
+          }else {
+            this.$message.error("导入失败");
+            this.textarea = response.message ;
+            response.data.forEach(a=>{
+              this.textarea += "\n"+a;
+            });
+          }
         });
       },
       readExcel(file) {
@@ -644,11 +660,12 @@
     transform-origin: center top;
     z-index: 2001;
   }
-  .el-textarea__inner {
+
+  textarea.el-textarea__inner {
     min-height: 33px;
     margin-top: 0px;
     margin-bottom: 0px;
-    height: 180px;
+    height: 203px !important;
   }
 </style>
 
