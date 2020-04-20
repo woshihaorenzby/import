@@ -62,6 +62,32 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/budget',
+    component: Layout,
+    redirect: '/budget/budget',
+    name: 'budget',
+    meta: {title: '收支', icon: 'product'},
+    children: [{
+      path: 'budget',
+      name: 'budget',
+      component: () => import('@/views/budget/index'),
+      meta: {title: '收支列表', icon: 'el-icon-coin'}
+    },{
+      path: 'updateBudgetData',
+      name: 'updateBudgetData',
+      component: () => import('@/views/budget/update'),
+      meta: {title: '编辑收支'},
+      hidden:true
+    },{
+      path: 'createBudgetData',
+      name: 'createBudgetData',
+      component: () => import('@/views/budget/add'),
+      meta: {title: '编辑收支'},
+      hidden:true
+    }
+    ]
+  },
+  {
     path: '/oms',
     component: Layout,
     redirect: '/oms/order',
