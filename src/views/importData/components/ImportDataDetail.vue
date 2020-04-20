@@ -133,7 +133,7 @@
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
-        this.brand = Object.assign({},defaultImportData);
+        this.importData = Object.assign({},defaultImportData);
       }
     }
   }

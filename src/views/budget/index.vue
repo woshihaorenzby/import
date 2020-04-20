@@ -172,32 +172,35 @@
   </div>
 </template>
 <script>
-  import {fetchList, getTamplate, do_import, doDeleteByIds, exportData,doDeleteHis} from '@/api/importData'
+  import {fetchList, getTamplate, do_import, doDeleteByIds, exportData,doDeleteHis} from '@/api/budget'
   import XLSX from 'xlsx'
   import {getToken} from '@/utils/auth'
   import {formatDate} from '@/utils/date';
   import Cookies from 'js-cookie';
 
   export default {
-    name: 'importDataList',
+    name: 'budgetList',
     data() {
       return {
         textarea: '',
         column2show: [],
         column2showData: [],
         column2All: [
-          {"text": "年月日", "lab": 'addTime', "type_str": 'data', "order": 1},
-          {"text": "编号", "lab": 'code', "type_str": 'text', "order": 2},
-          {"text": "A信息", "lab": 'aInfo', "type_str": 'text', "order": 3},
-          {"text": "旺旺号", "lab": 'wangwangId', "type_str": 'text', "order": 4},
-          {"text": "A金额", "lab": 'aPrice', "type_str": 'num', "order": 5},
-          {"text": "B金额", "lab": 'bPrice', "type_str": 'num', "order": 6},
-          {"text": "C佣金", "lab": 'commission', "type_str": 'num', "order": 7},
-          {"text": "B信息", "lab": 'bInfo', "type_str": 'text', "order": 8},
-          {"text": "创建人", "lab": 'createUsername', "type_str": 'text', "order": 9},
-          {"text": " 备注1", "lab": 'remark1', "type_str": 'text', "order": 10},
-          {"text": " 备注2", "lab": 'remark2', "type_str": 'text', "order": 11},
-          {"text": " 备注3", "lab": 'remark3', "type_str": 'text', "order": 12},
+          {"text": "交易日期", "lab": 'tradeData', "type_str": 'data', "order": 1},
+          {"text": "店名", "lab": 'storeName', "type_str": 'text', "order": 2},
+          {"text": "类别", "lab": 'type', "type_str": 'text', "order": 3},
+          {"text": "金额相关备注", "lab": 'amountRemark', "type_str": 'text', "order": 4},
+          {"text": "支出金额", "lab": 'pay', "type_str": 'num', "order": 5},
+          {"text": "收入金额", "lab": 'income', "type_str": 'num', "order": 6},
+          {"text": "支出方名称", "lab": 'payName', "type_str": 'text', "order": 7},
+          {"text": "支出方账户", "lab": 'payAccount', "type_str": 'text', "order": 8},
+          {"text": "支出方备注", "lab": 'payRemark', "type_str": 'text', "order": 9},
+          {"text": " 收入方名称", "lab": 'incomeName', "type_str": 'text', "order": 10},
+          {"text": " 收入方账户", "lab": 'incomeAccount', "type_str": 'text', "order": 11},
+          {"text": " 收入方备注", "lab": 'incomeRemark', "type_str": 'text', "order": 12},
+          {"text": " 备注", "lab": 'remark', "type_str": 'text', "order": 13},
+          {"text": " 核对人", "lab": 'checkName', "type_str": 'text', "order": 14},
+          {"text": " 创建人", "lab": 'createUsername', "type_str": 'text', "order": 15},
         ],
         pickerDate: "",
         uploadExcel: '',
@@ -278,7 +281,7 @@
     methods: {
       handleCheckedCitiesChange() {
         this.column2showData = [];
-        Cookies.remove('column2show_import1');
+        Cookies.remove('column2show_budget');
         this.column2show.forEach(cl => {
           let text = "";
           let order = "";
@@ -305,11 +308,11 @@
             return -1;
           }
         })
-        Cookies.set('column2show_import1', JSON.stringify(this.column2showData), {expires: 7, path: '/'});
+        Cookies.set('column2show_budget', JSON.stringify(this.column2showData), {expires: 7, path: '/'});
       },
       getColumn() {//回显
-        if (Cookies.get('column2show_import1') !== null && Cookies.get('column2show_import1') !== undefined) {
-          this.column2showData = JSON.parse(Cookies.get('column2show_import1'));
+        if (Cookies.get('column2show_budget') !== null && Cookies.get('column2show_budget') !== undefined) {
+          this.column2showData = JSON.parse(Cookies.get('column2show_budget'));
         } else {
           this.column2showData = this.column2All;
         }
@@ -579,10 +582,10 @@
         return ids;
       },
       handleUpdate(index, row) {
-        this.$router.push({path: '/importData/updateImportData', query: {id: row.id}})
+        this.$router.push({path: '/budget/updateBudgetData', query: {id: row.id}})
       },
       addImportData() {
-        this.$router.push({path: '/importData/createImportData'});
+        this.$router.push({path: '/budget/createBudgetData'});
       },
       handleDelete(index, row) {
         this.$confirm('是否要删除该数据', '提示', {

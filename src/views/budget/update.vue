@@ -1,11 +1,11 @@
 <template> 
-  <importData-detail :is-edit='true'></importData-detail>
+  <budget-detail :is-edit='true'></budget-detail>
 </template>
 <script>
-  import ImportDataDetail from './components/ImportDataDetail'
+  import BudgetDetail from './components/BudgetDetail'
   export default {
-    name: 'updateImportData',
-    components: { ImportDataDetail }
+    name: 'updateBudget',
+    components: { BudgetDetail }
   }
 </script>
 <style>
