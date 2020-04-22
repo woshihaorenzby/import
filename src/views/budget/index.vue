@@ -16,32 +16,40 @@
             <el-input style="width: 203px" v-model="listQuery.anyColumn" placeholder="任意列"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input style="width: 203px" v-model="listQuery.code" placeholder="编号"></el-input>
-          </el-form-item>
-          <el-form-item>
             <el-input style="width: 203px" v-model="listQuery.storeName" placeholder="店铺"></el-input>
           </el-form-item>
           <el-form-item>
             <el-input style="width: 203px" v-model="listQuery.createUserName" placeholder="创建人"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input style="width: 203px" v-model="listQuery.wangwangId" placeholder="旺旺号"></el-input>
+            <el-input style="width: 203px" v-model="listQuery.type" placeholder="类别"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input style="width: 203px" v-model="listQuery.info1" placeholder="A信息"></el-input>
+            <el-input style="width: 203px" v-model="listQuery.amountRemark" placeholder="金额相关备注"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input style="width: 203px" v-model="listQuery.info2" placeholder="B信息"></el-input>
-          </el-form-item>
-
-          <el-form-item>
-            <el-input style="width: 203px" v-model="listQuery.remark1" placeholder="备注1"></el-input>
+            <el-input style="width: 203px" v-model="listQuery.payName" placeholder="支出方名称"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input style="width: 203px" v-model="listQuery.remark2" placeholder="备注2"></el-input>
+            <el-input style="width: 203px" v-model="listQuery.payAccount" placeholder="支出方账户"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input style="width: 203px" v-model="listQuery.remark3" placeholder="备注3"></el-input>
+            <el-input style="width: 203px" v-model="listQuery.payRemark" placeholder="支出方备注"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.incomeName" placeholder="收入方名称"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.incomeAccount" placeholder="收入方账户"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.incomeRemark" placeholder="收入方备注"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.remark" placeholder="备注"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input style="width: 203px" v-model="listQuery.checkName" placeholder="核对人"></el-input>
           </el-form-item>
           <el-date-picker
             v-model="pickerDate"
@@ -49,8 +57,8 @@
             align="right"
             unlink-panels
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            start-placeholder="交易时间开始"
+            end-placeholder="交易时间结束"
             :picker-options="pickerOptions"
             size="small">
           </el-date-picker>
@@ -106,7 +114,10 @@
         <div style="margin: 20px 0;"></div>
         <el-input
           type="textarea"
-          placeholder="导入结果"
+          placeholder="
+        1.交易日期格式为'2020-04-22'，需要文本格式，不填则视为当日
+        2.支出金额需要数值形式
+        3.收入金额需要数值形式"
           v-model="textarea"
           disabled
           :rows="15"
