@@ -42,7 +42,7 @@
   </el-card>
 </template>
 <script>
-  import {createImportData, getImportData, updateImportData} from '@/api/importData'
+  import {createImportData, getImportData, updateImportData} from '@/api/importData1'
   const defaultImportData={
     wangwangId: '',
     commission: '0',
@@ -56,7 +56,7 @@
     remark3: '',
   };
   export default {
-    name: 'ImportDataDetail',
+    name: 'ImportDataDetail1',
     props: {
       isEdit: {
         type: Boolean,

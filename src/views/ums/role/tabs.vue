@@ -61,7 +61,7 @@
           let params = new URLSearchParams();
           params.append("roleId", this.roleId);
           params.append("resourceIds", Array.from(checkedResourceIds));
-          params.append("fields",this.fieldList);
+          params.append("fields",JSON.stringify(this.fieldList));
           allocResource(params).then(response => {
             this.$message({
               message: '分配成功',
@@ -86,6 +86,7 @@
       },
       toClick2: function (fieldList){
         this.fieldList = fieldList;
+        console.log(fieldList);
       }
     }
   }

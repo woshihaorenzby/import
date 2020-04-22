@@ -62,6 +62,32 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/importData1',
+    component: Layout,
+    redirect: '/importData1/importData1',
+    name: 'importData1',
+    meta: {title: '信息', icon: 'order-return-reason'},
+    children: [{
+      path: 'importData1',
+      name: 'importData1',
+      component: () => import('@/views/importData1/index'),
+      meta: {title: '信息列表', icon: 'product-list'}
+    },{
+      path: 'updateImportData1',
+      name: 'updateImportData1',
+      component: () => import('@/views/importData1/update'),
+      meta: {title: '编辑信息'},
+      hidden:true
+    },{
+      path: 'createImportData1',
+      name: 'createImportData1',
+      component: () => import('@/views/importData1/add'),
+      meta: {title: '编辑信息'},
+      hidden:true
+    }
+    ]
+  },
+  {
     path: '/budget',
     component: Layout,
     redirect: '/budget/budget',

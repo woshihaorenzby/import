@@ -2,46 +2,47 @@
   <el-card class="form-container" shadow="never">
     <el-form :model="budget" :rules="rules" ref="budgetFrom" label-width="150px">
       <el-form-item label="交易日期：" prop="tradeData">
-        <el-date-picker type="date" placeholder="选择日期" disabled="{budget.tradeData===null}" v-model="budget.tradeData" style="width: 100%;"></el-date-picker>
+        <el-date-picker v-if="this.formatCreateTime(budget.tradeData)!=='1900-01-01'" type="date" placeholder="选择日期"  v-model="budget.tradeData" style="width: 100%;"></el-date-picker>
+        <el-input v-if="this.formatCreateTime(budget.tradeData)==='1900-01-01'" v-model="budget.tradeData" :disabled="true"></el-input>
       </el-form-item>
       <el-form-item label="店名：" prop="storeName">
-        <el-input v-model="budget.storeName" disabled="{budget.storeName==='*'}"></el-input>
+        <el-input v-model="budget.storeName" :disabled="budget.storeName==='*'"></el-input>
       </el-form-item>
       <el-form-item label="类型：" prop="type">
-        <el-input v-model="budget.type" disabled="{budget.type==='*'}"></el-input>
+        <el-input v-model="budget.type" :disabled="budget.type==='*'"></el-input>
       </el-form-item>
       <el-form-item label="金额相关备注：" prop="amountRemark">
-        <el-input v-model="budget.amountRemark" disabled="{budget.amountRemark==='*'}"></el-input>
+        <el-input v-model="budget.amountRemark" :disabled="budget.amountRemark==='*'"></el-input>
       </el-form-item>
       <el-form-item label="支出金额：" prop="pay">
-        <el-input v-model="budget.pay" disabled="{budget.pay==='-1'}"></el-input>
+        <el-input v-model="budget.pay" :disabled="budget.pay==='-1'"></el-input>
       </el-form-item>
       <el-form-item label="收入金额：" prop="income">
-        <el-input v-model="budget.income" disabled="{budget.income==='-1'}"></el-input>
+        <el-input v-model="budget.income" :disabled="budget.income==='-1'"></el-input>
       </el-form-item>
       <el-form-item label="支出方名称：" prop="payName">
-        <el-input v-model="budget.payName" disabled="{budget.payName==='*'}"></el-input>
+        <el-input v-model="budget.payName" :disabled="budget.payName==='*'"></el-input>
       </el-form-item>
       <el-form-item label="支出方备注：" prop="payRemark">
-        <el-input v-model="budget.payRemark" disabled="{budget.payRemark==='*'}"></el-input>
+        <el-input v-model="budget.payRemark" :disabled="budget.payRemark==='*'"></el-input>
       </el-form-item>
       <el-form-item label="支出方账户：" prop="payAccount">
-        <el-input v-model="budget.payAccount" disabled="{budget.payAccount==='*'}"></el-input>
+        <el-input v-model="budget.payAccount" :disabled="budget.payAccount==='*'"></el-input>
       </el-form-item>
       <el-form-item label="收入方名称：" prop="incomeName">
-        <el-input v-model="budget.incomeName" disabled="{budget.incomeName==='*'}"></el-input>
+        <el-input v-model="budget.incomeName" :disabled="budget.incomeName==='*'"></el-input>
       </el-form-item>
       <el-form-item label="收入方账户：" prop="incomeAccount">
-        <el-input v-model="budget.incomeAccount" disabled="{budget.incomeAccount==='*'}"></el-input>
+        <el-input v-model="budget.incomeAccount" :disabled="budget.incomeAccount==='*'"></el-input>
       </el-form-item>
       <el-form-item label="收入方备注：" prop="incomeRemark">
-        <el-input v-model="budget.incomeRemark" disabled="{budget.incomeRemark==='*'}"></el-input>
+        <el-input v-model="budget.incomeRemark" :disabled="budget.incomeRemark==='*'"></el-input>
       </el-form-item>
       <el-form-item label="备注：" prop="remark">
-        <el-input v-model="budget.remark" disabled="{budget.remark==='*'}"></el-input>
+        <el-input v-model="budget.remark" :disabled="budget.remark==='*'"></el-input>
       </el-form-item>
       <el-form-item label="核对人：" prop="checkName">
-        <el-input v-model="budget.checkName" disabled="{budget.checkName==='*'}"></el-input>
+        <el-input v-model="budget.checkName" :disabled="budget.checkName==='*'"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit('budgetFrom')">提交</el-button>
@@ -52,7 +53,7 @@
 </template>
 <script>
   import {createImportData, getImportData, updateImportData} from '@/api/budget'
-
+  import {formatDate} from '@/utils/date';
   const defaultBudget = {
     // 交易日期
     tradeData: null,
@@ -108,6 +109,9 @@
         }
       }
     },
+    filters: {
+
+    },
     created() {
       if (this.isEdit) {
         getImportData(this.$route.query.id).then(response => {
@@ -118,6 +122,10 @@
       }
     },
     methods: {
+      formatCreateTime(time) {
+        let date = new Date(time);
+        return formatDate(date, 'yyyy-MM-dd')
+      },
       onSubmit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {

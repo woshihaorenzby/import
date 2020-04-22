@@ -1,15 +1,24 @@
 <template>
   <div>
-    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-    <div style="margin: 15px 0;"></div>
-    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-      <el-checkbox v-for="city in cities" :label="city.name" :key="city.title" :checked="city.check===1?true:false">{{city.title}}</el-checkbox>
-    </el-checkbox-group>
+    <div v-for="(cate,index) in fieldsMap" :class="index===0?'top-line':null" :key="cate.key">
+      <el-row class="table-layout" style="background: #F2F6FC;">
+        <el-checkbox v-model="cate.checked"
+                     @change="handleCheckAllChange(cate)">
+          {{cate.name}}
+        </el-checkbox>
+      </el-row>
+      <el-row class="table-layout">
+        <el-col :span="8" v-for="resource in cate.list" :key="resource.name" style="padding: 4px 0">
+          <el-checkbox v-model="resource.checked"  :checked="resource.check===1?true:false" @change="handleCheckedCitiesChange(resource)">
+            {{resource.title}}
+          </el-checkbox>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 <script>
   import {fetchAllResourceList} from '@/api/importField';
-  const cityOptions = [];
   export default {
     name: 'child2',
     data() {
@@ -18,9 +27,10 @@
         fields: null,
         roleId: null,
         checkAll: false,
-        checkedCities: [],
-        cities: [],
-        isIndeterminate: true,
+        checkedCities: new Map(),
+        fieldsMap: [],
+        cityOptions:new Map(),
+      isIndeterminate: true,
       };
     },
     created() {
@@ -29,23 +39,50 @@
     },
     methods: {
       handleCheckAllChange(val) {
-        this.checkedCities = val ? cityOptions : [];
-        this.isIndeterminate = false;
+        this.checkedCities.set(val.key,(val.checked ? this.cityOptions.get(val.key) : [])) ;
+        this.cityOptions.get(val.key).forEach(item=>{
+          item.checked=val.checked;
+        });
         this.$emit("parentEvent2",this.checkedCities);
       },
       handleCheckedCitiesChange(value) {
-        let checkedCount = value.length;
-        this.checkAll = checkedCount === this.cities.length;
-        this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
+        let key = value.name.split("_")[0];
+        let hasCheckList = this.checkedCities.get(key);
+        let newCheckList = [];
+        hasCheckList.forEach(item=>{
+          if(item.name!==value.name){
+            newCheckList.push(item);
+          }
+        });
+        if(value.checked){
+          newCheckList.push(value);
+        }
+        this.fieldsMap.forEach(item=>{
+          if(item.key===key){
+            item.checked=newCheckList.length===this.cityOptions.get(key).length;
+          }
+        });
+        this.checkedCities.set(key,newCheckList);
         this.$emit("parentEvent2",this.checkedCities);
       },
       getAllResourceList() {
         fetchAllResourceList(this.roleId).then(response => {
           response.data.forEach(item=>{
-            cityOptions.push(item.name);
+            console.log(item);
+            let key = item.key;
+            let list = item.list;
+            this.cityOptions.set(key,list);
+            let hasCheck = [];
+            list.forEach(i=>{
+              if(i.check===1){
+                hasCheck.push(i);
+              }
+            });
+            item.checked=hasCheck.length===list.length;
+            this.checkedCities.set(key,hasCheck);
             this.$emit("parentEvent2",this.checkedCities);
           });
-          this.cities = response.data;
+          this.fieldsMap = response.data;
         });
       },
     }
