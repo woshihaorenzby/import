@@ -1,6 +1,10 @@
 <template> 
   <el-card class="form-container" shadow="never">
     <el-form :model="importData" :rules="rules" ref="importDataFrom" label-width="150px">
+      <el-form-item label="交易日期：" prop="tradeData">
+        <el-date-picker v-if="this.formatCreateTime(importData.addTime)!=='1900-01-01'" type="date" placeholder="选择日期"  v-model="importData.addTime" style="width: 100%;"></el-date-picker>
+        <el-input v-if="this.formatCreateTime(importData.addTime)==='1900-01-01'" v-model="importData.addTime" :disabled="true"></el-input>
+      </el-form-item>
       <el-form-item label="编号：" prop="code">
         <el-input v-model="importData.code" :disabled="importData.code==='*'"></el-input>
       </el-form-item>
@@ -43,6 +47,7 @@
 </template>
 <script>
   import {createImportData, getImportData, updateImportData} from '@/api/importData'
+  import {formatDate} from '@/utils/date';
   const defaultImportData={
     wangwangId: '',
     commission: '0',
@@ -90,6 +95,10 @@
       }
     },
     methods: {
+      formatCreateTime(time) {
+        let date = new Date(time);
+        return formatDate(date, 'yyyy-MM-dd')
+      },
       onSubmit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
