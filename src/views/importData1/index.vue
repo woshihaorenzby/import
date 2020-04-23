@@ -106,7 +106,11 @@
         <div style="margin: 20px 0;"></div>
         <el-input
           type="textarea"
-          placeholder="导入结果"
+          placeholder="
+      1.年月日格式为'2020-04-22'，需要文本格式，不填则视为当日
+      2.A金额需要整数或者小数形式
+      3.B金额需要整数或者小数值形式
+      4.佣金需要整数或者小数值形式"
           v-model="textarea"
           disabled
           :rows="15"
