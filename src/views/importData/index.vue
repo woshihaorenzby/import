@@ -135,15 +135,15 @@
         width="55">
       </el-table-column>
       <template v-for="cl in column2showData">
-        <el-table-column v-if="cl.type_str==='num'&& cl.lab!=='id'" :label="cl.text" :key="cl.lab" :prop="cl.lab"
+        <el-table-column v-if="cl.type_str==='num'&& cl.lab!=='id'" :label="cl.text" :show-overflow-tooltip='true' :key="cl.lab" :prop="cl.lab"
                          sortable></el-table-column>
-        <el-table-column v-else-if="cl.type_str==='data'&& cl.lab!=='id'" :label="cl.text" :key="cl.lab" sortable :prop="cl.lab">
+        <el-table-column v-else-if="cl.type_str==='data'&& cl.lab!=='id'" :label="cl.text" :show-overflow-tooltip='true' :key="cl.lab" sortable :prop="cl.lab">
           <template slot-scope="scope">{{ scope.row[cl.lab]|formatCreateTime}}</template>
         </el-table-column>
-        <el-table-column v-else-if="cl.type_str==='text'&&cl.lab!=='id'" :label="cl.text" :key="cl.lab">
+        <el-table-column v-else-if="cl.type_str==='text'&&cl.lab!=='id'" :label="cl.text" :show-overflow-tooltip='true' :key="cl.lab">
           <template slot-scope="scope">{{ scope.row[cl.lab]}}</template>
         </el-table-column>
-        <el-table-column v-else-if="cl.lab==='id'" :label="cl.text" :key="cl.lab" :prop="cl.lab" hidden>
+        <el-table-column v-else-if="cl.lab==='id'" :label="cl.text" :key="cl.lab"  :show-overflow-tooltip='true' :prop="cl.lab" hidden>
         </el-table-column>
       </template>
       <el-table-column label="操作" width='100' align="center">
