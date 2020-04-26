@@ -378,9 +378,9 @@
         return new Promise(function (resolve, reject) {
 // readExcel方法也使用了Promise异步转同步，此处使用then对返回值进行处理
           _this.readExcel(file).then(result => {
-            const isLt2M = file.size / 1024 / 1024 < 0.5
+            const isLt2M = file.size / 1024 / 1024 < 10
             if (!isLt2M) {
-              _this.$message.error('文件大小不能超过500kb!')
+              _this.$message.error('文件大小不能超过10M!')
             }
             if (isLt2M && result) {
               resolve('校验成功!');
